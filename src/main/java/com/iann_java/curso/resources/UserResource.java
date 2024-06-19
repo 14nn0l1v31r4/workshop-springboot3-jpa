@@ -1,11 +1,11 @@
 package com.iann_java.curso.resources;
 
 import java.net.URI;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +16,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.iann_java.curso.entities.User;
 import com.iann_java.curso.services.UserService;
-
-import jakarta.servlet.Servlet;
 
 
 @RestController
@@ -45,11 +43,19 @@ public class UserResource {
 		/*para retornar 201 como sinal de sucesso no postman(maneira correta)
 		necessesário inserir location(cabeçalho), por isso o URI */
 		
+		//maneira correta para inserir recursos no bd
+		
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}").buildAndExpand(obj.getId()).toUri();
 		//.created(uri) define o  status HTTP como 201
 		return ResponseEntity.created(uri).body(obj);
 	}
 	
+	@DeleteMapping(value = "/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Long id){
+		service.delete(id);
+		//noContent retorna reposta 204 no HTTP	
+		return ResponseEntity.noContent().build();
+	}
 	
 }
