@@ -12,6 +12,8 @@ import com.iann_java.curso.entities.User;
 import com.iann_java.curso.repositories.UserRepository;
 import com.iann_java.curso.services.execeptions.DatabaseException;
 import com.iann_java.curso.services.execeptions.ResourceNotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
 @Service
 public class UserService {
 	@Autowired
@@ -36,15 +38,19 @@ public class UserService {
 		    }catch(EmptyResultDataAccessException e) {
 		    	throw new ResourceNotFoundException(id);
 		    }catch (DataIntegrityViolationException e) { 
-		    	throw new DatabaseException(e.getMessage());
+		    	throw new DatabaseException(e.getMessage()); 
 		    }
 		    } 
 		    
 	
 	public User update(Long id, User obj) {
-		User entity = repository.getReferenceById(id);
-		updateData(entity, obj);
-		return repository.save(entity);
+		try {
+			User entity = repository.getReferenceById(id);
+			updateData(entity, obj);
+			return repository.save(entity);
+		}catch(EntityNotFoundException e ) {
+			throw new ResourceNotFoundException(id);
+		}
 	}
 
 	private void updateData(User entity, User obj) {
